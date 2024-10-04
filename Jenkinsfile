@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/asamaatarek/Terraform_Project.git'
+                git "https://github.com/asamaatarek/Terraform_Project.git"
             }
         }
 
