@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://your-git-repository.git'
+                git url: 'https://github.com/asamaatarek/Terraform_Project.git'
             }
         }
 
@@ -23,7 +23,7 @@ pipeline {
 
         stage('Copy Ansible Files') {
             steps {
-                sh 'scp -i tra.pem ansible/* ubuntu@bastion-ip'
+                sh 'scp -i tera.pem ansible/* ubuntu@bastion-ip'
             }
         }
 
