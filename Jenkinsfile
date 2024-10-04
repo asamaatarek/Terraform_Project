@@ -1,64 +1,35 @@
 pipeline {
-    parameters {
-        booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
-    } 
-
     agent any
+
     stages {
         stage('Checkout') {
             steps {
-                script {
-                    dir("terraform") {
-                        git "https://github.com/asamaatarek/Terraform_Project.git"
-                    }
-                }
+                git url: 'https://your-git-repository.git'
             }
         }
 
-        stage('Plan') {
+        stage('Terraform Plan') {
             steps {
-                script {
-                    dir('terraform') {
-                        sh 'terraform init'
-                        sh 'terraform plan -out=tfplan'
-                        sh 'terraform show -no-color tfplan > tfplan.txt'
-                    }    
-                }
+                sh 'terraform init'
+                sh 'terraform plan -out tf.tfstate'
             }
         }
 
-        stage('Approval') {
-            when {
-                not {
-                    equals expected: true, actual: params.autoApprove
-                }
-            }
+        stage('Terraform Apply') {
             steps {
-                script {
-                    def plan = readFile 'terraform/tfplan.txt'
-                    input message: "Do you want to apply the plan?", 
-                          parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
-                }
+                sh 'terraform apply -auto-approve'
             }
         }
 
-        stage('Apply') {
+        stage('Copy Ansible Files') {
             steps {
-                script {
-                    dir('terraform') {
-                        sh 'terraform apply -input=false tfplan'
-                    }
-                }
+                sh 'scp -i tra.pem ansible/* ubuntu@bastion-ip'
             }
         }
 
-        stage('Ansible Setup') {
+        stage('Run Ansible Playbook') {
             steps {
-                script {
-                    dir('ansible') {
-                        sh 'ansible-playbook -i inventory deploy_nginx.yml'
-                    }
-                }
+                sh 'ssh -i tera.pem ubuntu@bastion-ip -t ansible-playbook -i hosts docker_install.yml'
             }
         }
     }
