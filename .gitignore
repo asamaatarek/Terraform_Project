@@ -4,5 +4,5 @@ terraform.tfstate
 terraform.tfstate.backup
 .terraform.lock.hcl
 tera.pem
-terraform.tfstate
-terraform.tfstate.backup
+Terraform_Project/
+ansible/inventory
