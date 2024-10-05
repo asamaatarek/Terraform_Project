@@ -7,7 +7,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git "https://github.com/asamaatarek/Terraform_Project.git"
+                git branch: 'main', url: 'https://github.com/asamaatarek/Terraform_Project.git'
             }
         }
 
