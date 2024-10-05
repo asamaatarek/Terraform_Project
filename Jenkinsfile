@@ -7,20 +7,27 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/asamaatarek/Terraform_Project.git'
+                script{
+                        dir("terraform")
+                        {
+                            git branch: 'main', url: 'https://github.com/asamaatarek/Terraform_Project.git'
+                        }
+                }
             }
         }
 
         stage('Terraform Plan') {
             steps {
-                sh 'terraform init'
-                sh 'pwd;cd terraform/ ; terraform plan -out terraform.tfstate'
+                dir("terraform") {
+                    sh 'terraform init'
+                    sh 'terraform plan -out terraform.tfstate'
+                }
             }
         }
 
         stage('Terraform Apply') {
             steps {
-                sh 'terraform apply -auto-approve'
+                sh 'pwd;cd terraform/ ; terraform apply -auto-approve'
             }
         }
 
