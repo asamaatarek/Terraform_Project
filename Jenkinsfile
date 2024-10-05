@@ -4,11 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-<<<<<<< HEAD
                 git "https://github.com/asamaatarek/Terraform_Project.git"
-=======
-                git url: 'https://github.com/asamaatarek/Terraform_Project.git'
->>>>>>> 49caa15 (jenkins)
             }
         }
 
@@ -27,17 +23,15 @@ pipeline {
 
         stage('Copy Ansible Files') {
             steps {
-<<<<<<< HEAD
-                sh 'scp -i tera.pem ansible/* ubuntu@bastion-ip'
-=======
-                sh 'scp -i tra.pem ansible/* ubuntu@bastion-ip'
->>>>>>> 49caa15 (jenkins)
+                sh 'scp -i tera.pem ansible/* ubuntu@bastion_public_ip_AZ1'
+                sh 'scp -i tera.pem ansible/* ubuntu@bastion_public_ip_AZ2'
             }
         }
 
         stage('Run Ansible Playbook') {
             steps {
-                sh 'ssh -i tera.pem ubuntu@bastion-ip -t ansible-playbook -i hosts docker_install.yml'
+                sh 'ssh -i tera.pem ubuntu@bastion_public_ip_AZ1 -t ansible-playbook -i hosts docker_install.yml'
+                sh 'ssh -i tera.pem ubuntu@bastion_public_ip_AZ2 -t ansible-playbook -i hosts docker_install.yml'
             }
         }
     }
