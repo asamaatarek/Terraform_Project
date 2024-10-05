@@ -20,7 +20,7 @@ pipeline {
             steps {
                 dir("terraform") {
                     sh 'terraform init'
-                    sh 'terraform plan -out terraform.tfstate'
+                    sh 'terraform plan -out tf.tfstate'
                 }
             }
         }
