@@ -53,23 +53,28 @@ pipeline {
                 // Check if Bastion IP was successfully fetched
                 script {
                     if (BASTION_IP_AZ1 != null && BASTION_IP_AZ1 != '') {
-                        sh """
-                            echo "$BASTION_SSH_CREDENTIALS" > tera.pem
-                            chmod 600 tera.pem
-                            scp -i tera.pem -r ansible/* ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
+                        withCredentials([file(credentialsId: 'tera-pem', variable: 'PEM_FILE')]) {
+                             sh """
+                            chmod 600 $PEM_FILE
+                            scp -i $PEM_FILE -r ansible/* ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
                         """
+                            }     
+                        }  
                     } else {
                         error "Bastion public IP 1 not available."
                     }
+
                     if (BASTION_IP_AZ2 != null && BASTION_IP_AZ2 != '') {
-                        sh """
-                            echo "$BASTION_SSH_CREDENTIALS" > tera.pem
-                            chmod 600 tera.pem
-                            scp -i tera.pem -r ansible/* ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/
+                        withCredentials([file(credentialsId: 'tera-pem', variable: 'PEM_FILE')]) {
+                            sh """
+                            chmod 600 $PEM_FILE
+                            scp -i $PEM_FILE -r ansible/* ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/
                         """
+                        }   
                     } else {
                         error "Bastion public IP 2 not available."
                     }
+                    
                 }
             }
         }
@@ -79,16 +84,20 @@ pipeline {
                 // SSH into the Bastion and run the Ansible playbook
                 script {
                     if (BASTION_IP_AZ1 != null && BASTION_IP_AZ1 != '') {
-                        sh """
-                            ssh -i tera.pem ubuntu@${BASTION_IP_AZ1} -t ansible-playbook -i hosts docker_install.yml
+                        withCredentials([file(credentialsId: 'tera-pem', variable: 'PEM_FILE')]) {
+                            sh """
+                            ssh -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} -t ansible-playbook -i hosts docker_install.yml
                         """
+                        } 
                     } else {
                         error "Bastion public IP 1 not available."
                     }
                     if (BASTION_IP_AZ2 != null && BASTION_IP_AZ2 != '') {
-                        sh """
-                            ssh -i tera.pem ubuntu@${BASTION_IP_AZ2} -t ansible-playbook -i hosts docker_install.yml
+                        withCredentials([file(credentialsId: 'tera-pem', variable: 'PEM_FILE')]) {
+                            sh """
+                            ssh -i $PEM_FILE ubuntu@${BASTION_IP_AZ2} -t ansible-playbook -i hosts docker_install.yml
                         """
+                        }
                     } else {
                         error "Bastion public IP 2 not available."
                     }
