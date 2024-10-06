@@ -37,7 +37,7 @@ pipeline {
 
         stage('Copy Ansible Files') {
             steps {
-                sh 'pwd;cd ..;chmod 400 tera.pem;'
+                sh 'pwd;chmod 400 tera.pem;'
                 sh 'scp -i tera.pem -r ansible/* ubuntu@bastion_public_ip_AZ1:/home/ubuntu/'
                 sh 'scp -i tera.pem -r ansible/* ubuntu@bastion_public_ip_AZ2:/home/ubuntu/'
             }
