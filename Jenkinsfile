@@ -5,7 +5,6 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        BASTION_SSH_CREDENTIALS = credentials('bastion_ssh_key')
         BASTION_IP_AZ1 = ''
         BASTION_IP_AZ2 = ''
     }
