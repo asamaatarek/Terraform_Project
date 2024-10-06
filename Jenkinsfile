@@ -50,12 +50,14 @@ pipeline {
         stage('Copy Ansible Files') {
             steps {
                 script {
-                    if (BASTION_IP_AZ1 != null && BASTION_IP_AZ1 != '') {
-                        withCredentials([file(credentialsId: 'tera-pem', variable: 'PEM_FILE')]) {
+                    withCredentials([file(credentialsId: 'tera-pem', variable: 'PEM_FILE')]) {
                             sh """
                                 chmod 400 $PEM_FILE
                                 scp -i $PEM_FILE -r ansible/* ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
                             """
+                        }
+                    if (BASTION_IP_AZ1 != null && BASTION_IP_AZ1 != '') {
+                        
                         }
                     } else {
                         error "Bastion public IP 1 not available."
