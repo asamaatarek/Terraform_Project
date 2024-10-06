@@ -5,6 +5,7 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+        BASTION_SSH_CREDENTIALS = credentials('bastion_ssh_key')
     }
     agent any
 
@@ -37,7 +38,12 @@ pipeline {
 
         stage('Copy Ansible Files') {
             steps {
-                sh 'scp -i tera.pem -r ansible/* ubuntu@bastion_public_ip_AZ1:/home/ubuntu/'
+
+                sh '''
+                echo "$BASTION_SSH_CREDENTIALS" > tera.pem
+                chmod 600 tera.pem
+                scp -i tera.pem -r ansible/* ubuntu@bastion_public_ip_AZ1:/home/ubuntu/
+                '''
                 sh 'scp -i tera.pem -r ansible/* ubuntu@bastion_public_ip_AZ2:/home/ubuntu/'
             }
         }
