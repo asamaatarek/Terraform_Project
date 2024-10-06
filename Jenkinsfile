@@ -37,8 +37,10 @@ pipeline {
 
         stage('Copy Ansible Files') {
             steps {
-                sh 'scp -i tera.pem ansible/* ubuntu@bastion_public_ip_AZ1'
-                sh 'scp -i tera.pem ansible/* ubuntu@bastion_public_ip_AZ2'
+                 dir("ansible") {
+                    sh 'scp -i tera.pem ansible/* ubuntu@bastion_public_ip_AZ1'
+                    sh 'scp -i tera.pem ansible/* ubuntu@bastion_public_ip_AZ2'
+                }
             }
         }
 
