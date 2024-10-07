@@ -53,8 +53,8 @@ pipeline {
                     if (BASTION_IP_AZ1 != null && BASTION_IP_AZ1 != '') {
                         withCredentials([file(credentialsId: 'tera-pem', variable: 'PEM_FILE')]) {
                             sh """
+                                sudo scp -i $PEM_FILE -r ansible/ ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
                                 chmod 400 $PEM_FILE
-                                scp -i $PEM_FILE -r ansible/roles ansible/docker_nginx.yml ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
                             """
                         }
                     } else {
