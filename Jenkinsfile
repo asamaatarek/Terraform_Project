@@ -38,8 +38,8 @@ pipeline {
 
         stage('Fetch Bastion IP') {
             steps {
-                script {
-                    dir("terraform") {
+                 dir("terraform") {
+                    script {
                         BASTION_IP_AZ1 = sh(script: 'terraform output -raw bastion_public_ip_AZ1', returnStdout: true).trim()
                         BASTION_IP_AZ2 = sh(script: 'terraform output -raw bastion_public_ip_AZ2', returnStdout: true).trim()
                         echo "Bastion IP AZ1: ${BASTION_IP_AZ1}"
