@@ -19,7 +19,7 @@ resource "aws_security_group" "bastion_sg" {
 }
 
 # Bastion Host EC2 Instance
-resource "aws_instance" "bastion-az1" {
+resource "aws_instance" "bastion_az1" {
   ami           = "ami-0e86e20dae9224db8"  
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.public_subnet_az1.id
@@ -32,7 +32,7 @@ resource "aws_instance" "bastion-az1" {
 }
 
 # Bastion Host EC2 Instance for AZ2
-resource "aws_instance" "bastion-az2" {
+resource "aws_instance" "bastion_az2" {
   ami           = "ami-0e86e20dae9224db8"  
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.public_subnet_az2.id
