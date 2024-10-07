@@ -90,7 +90,7 @@ pipeline {
                         error "Bastion public IP 1 not available."
                     }
 
-                    if (BASTION_IP_AZ2 != null && BASTION_IP_AZ2 != '') 
+                    if (BASTION_IP_AZ2 != null && BASTION_IP_AZ2 != '') {
                         withCredentials([sshUserPrivateKey(credentialsId: 'tera-pem', keyFileVariable: 'PEM_FILE', usernameVariable: 'ubuntu')]) {
                             sh """
                                 ssh -i $PEM_FILE ubuntu@${BASTION_IP_AZ2} -t ansible-playbook -i hosts docker_install.yml
