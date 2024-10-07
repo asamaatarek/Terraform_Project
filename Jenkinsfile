@@ -39,10 +39,12 @@ pipeline {
         stage('Fetch Bastion IP') {
             steps {
                 script {
-                    BASTION_IP_AZ1 = sh(script: 'terraform output -raw bastion_public_ip_AZ1', returnStdout: true).trim()
-                    BASTION_IP_AZ2 = sh(script: 'terraform output -raw bastion_public_ip_AZ2', returnStdout: true).trim()
-                    echo "Bastion IP AZ1: ${BASTION_IP_AZ1}"
-                    echo "Bastion IP AZ2: ${BASTION_IP_AZ2}"
+                    dir("terraform") {
+                        BASTION_IP_AZ1 = sh(script: 'terraform output -raw bastion_public_ip_AZ1', returnStdout: true).trim()
+                        BASTION_IP_AZ2 = sh(script: 'terraform output -raw bastion_public_ip_AZ2', returnStdout: true).trim()
+                        echo "Bastion IP AZ1: ${BASTION_IP_AZ1}"
+                        echo "Bastion IP AZ2: ${BASTION_IP_AZ2}"
+                    }
                 }
             }
         }
