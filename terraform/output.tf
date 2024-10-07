@@ -18,10 +18,10 @@ output "private_subnet_az2_id" {
   value = aws_subnet.private_subnet_az2.id
 }
 output "bastion_public_ip_AZ1" {
-  value = aws_instance.bastion-az1.public_ip
+  value = aws_instance.bastion_az1.public_ip
   description = "Public IP of the Bastion Host"
 }
 output "bastion_public_ip_AZ2" {
-  value = aws_instance.bastion-az2.public_ip
+  value = aws_instance.bastion_az2.public_ip
   description = "Public IP of the Bastion Host"
 }
