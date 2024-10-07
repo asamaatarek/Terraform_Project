@@ -88,10 +88,16 @@ pipeline {
                                     if ! command -v ansible-playbook &> /dev/null
                                     then
                                         echo "Ansible not found. Installing..."
-                                        sudo apt-get update
-                                        sudo apt-get install -y ansible
+                                        sudo DEBIAN_FRONTEND=noninteractive apt-get update
+                                        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ansible
                                     fi
-                                    ansible-playbook -i hosts docker_install.yml
+                                    if [ -f "/home/ubuntu/docker_install.yml" ]
+                                    then
+                                        ansible-playbook -i /home/ubuntu/hosts /home/ubuntu/ansible/docker_nginx.yml
+                                    else
+                                        echo "Playbook docker_install.yml not found in /home/ubuntu/ansible"
+                                        exit 1
+                                    fi
                                 '
                             """
                         }
@@ -107,10 +113,16 @@ pipeline {
                                     if ! command -v ansible-playbook &> /dev/null
                                     then
                                         echo "Ansible not found. Installing..."
-                                        sudo apt-get update
-                                        sudo apt-get install -y ansible
+                                        sudo DEBIAN_FRONTEND=noninteractive apt-get update
+                                        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ansible
                                     fi
-                                    ansible-playbook -i hosts docker_install.yml
+                                    if [ -f "/home/ubuntu/docker_install.yml" ]
+                                    then
+                                        ansible-playbook -i /home/ubuntu/hosts /home/ubuntu/ansible/docker_nginx.yml
+                                    else
+                                        echo "Playbook docker_install.yml not found in /home/ubuntu/ansible"
+                                        exit 1
+                                    fi
                                 '
                             """
                         }
