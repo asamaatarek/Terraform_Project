@@ -83,7 +83,16 @@ pipeline {
                     if (BASTION_IP_AZ1 != null && BASTION_IP_AZ1 != '') {
                         withCredentials([sshUserPrivateKey(credentialsId: 'tera-pem', keyFileVariable: 'PEM_FILE', usernameVariable: 'ubuntu')]) {
                             sh """#!/bin/bash
-                                ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} -t ansible-playbook -i hosts docker_install.yml
+                                chmod 400 $PEM_FILE
+                                ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
+                                    if ! command -v ansible-playbook &> /dev/null
+                                    then
+                                        echo "Ansible not found. Installing..."
+                                        sudo apt-get update
+                                        sudo apt-get install -y ansible
+                                    fi
+                                    ansible-playbook -i hosts docker_install.yml
+                                '
                             """
                         }
                     } else {
@@ -93,7 +102,16 @@ pipeline {
                     if (BASTION_IP_AZ2 != null && BASTION_IP_AZ2 != '') {
                         withCredentials([sshUserPrivateKey(credentialsId: 'tera-pem', keyFileVariable: 'PEM_FILE', usernameVariable: 'ubuntu')]) {
                             sh """#!/bin/bash
-                                ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ2} -t ansible-playbook -i hosts docker_install.yml
+                                chmod 400 $PEM_FILE
+                                ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ2} '
+                                    if ! command -v ansible-playbook &> /dev/null
+                                    then
+                                        echo "Ansible not found. Installing..."
+                                        sudo apt-get update
+                                        sudo apt-get install -y ansible
+                                    fi
+                                    ansible-playbook -i hosts docker_install.yml
+                                '
                             """
                         }
                     } else {
