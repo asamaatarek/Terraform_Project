@@ -54,9 +54,9 @@ pipeline {
                 script {
                     if (BASTION_IP_AZ1 != null && BASTION_IP_AZ1 != '') {
                         withCredentials([sshUserPrivateKey(credentialsId: 'tera-pem', keyFileVariable: 'PEM_FILE', usernameVariable: 'ubuntu')]) {
-                            sh """
+                            sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
-                                scp -i $PEM_FILE -r ansible/ ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
+                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/ ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
                             """
                         }
                     } else {
@@ -65,9 +65,9 @@ pipeline {
 
                     if (BASTION_IP_AZ2 != null && BASTION_IP_AZ2 != '') {
                         withCredentials([sshUserPrivateKey(credentialsId: 'tera-pem', keyFileVariable: 'PEM_FILE', usernameVariable: 'ubuntu')]) {
-                            sh """
+                            sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
-                                scp -i $PEM_FILE -r ansible/* ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/
+                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/* ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/
                             """
                         }
                     } else {
@@ -82,8 +82,8 @@ pipeline {
                 script {
                     if (BASTION_IP_AZ1 != null && BASTION_IP_AZ1 != '') {
                         withCredentials([sshUserPrivateKey(credentialsId: 'tera-pem', keyFileVariable: 'PEM_FILE', usernameVariable: 'ubuntu')]) {
-                            sh """
-                                ssh -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} -t ansible-playbook -i hosts docker_install.yml
+                            sh """#!/bin/bash
+                                ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} -t ansible-playbook -i hosts docker_install.yml
                             """
                         }
                     } else {
@@ -92,8 +92,8 @@ pipeline {
 
                     if (BASTION_IP_AZ2 != null && BASTION_IP_AZ2 != '') {
                         withCredentials([sshUserPrivateKey(credentialsId: 'tera-pem', keyFileVariable: 'PEM_FILE', usernameVariable: 'ubuntu')]) {
-                            sh """
-                                ssh -i $PEM_FILE ubuntu@${BASTION_IP_AZ2} -t ansible-playbook -i hosts docker_install.yml
+                            sh """#!/bin/bash
+                                ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ2} -t ansible-playbook -i hosts docker_install.yml
                             """
                         }
                     } else {
