@@ -53,7 +53,7 @@ pipeline {
             steps {
                 script {
                     if (BASTION_IP_AZ1 != null && BASTION_IP_AZ1 != '') {
-                        withCredentials([file(credentialsId: 'tera-pem', variable: 'PEM_FILE')]) {
+                        withCredentials([file(credentialsId: 'tera.pem', variable: 'PEM_FILE')]) {
                             sh """
                                 scp -i $PEM_FILE -r ansible/ ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
                                 chmod 400 $PEM_FILE
@@ -64,7 +64,7 @@ pipeline {
                     }
 
                     if (BASTION_IP_AZ2 != null && BASTION_IP_AZ2 != '') {
-                        withCredentials([file(credentialsId: 'tera-pem', variable: 'PEM_FILE')]) {
+                        withCredentials([file(credentialsId: 'tera.pem', variable: 'PEM_FILE')]) {
                             sh """
                                 chmod 400 $PEM_FILE
                                 scp -i $PEM_FILE -r ansible/* ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/
@@ -81,7 +81,7 @@ pipeline {
             steps {
                 script {
                     if (BASTION_IP_AZ1 != null && BASTION_IP_AZ1 != '') {
-                        withCredentials([file(credentialsId: 'tera-pem', variable: 'PEM_FILE')]) {
+                        withCredentials([file(credentialsId: 'tera.pem', variable: 'PEM_FILE')]) {
                             sh """
                                 ssh -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} -t ansible-playbook -i hosts docker_install.yml
                             """
@@ -91,7 +91,7 @@ pipeline {
                     }
 
                     if (BASTION_IP_AZ2 != null && BASTION_IP_AZ2 != '') {
-                        withCredentials([file(credentialsId: 'tera-pem', variable: 'PEM_FILE')]) {
+                        withCredentials([file(credentialsId: 'tera.pem', variable: 'PEM_FILE')]) {
                             sh """
                                 ssh -i $PEM_FILE ubuntu@${BASTION_IP_AZ2} -t ansible-playbook -i hosts docker_install.yml
                             """
