@@ -91,11 +91,11 @@ pipeline {
                                         sudo DEBIAN_FRONTEND=noninteractive apt-get update
                                         sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ansible
                                     fi
-                                    if [ -f "/home/ubuntu/docker_install.yml" ]
+                                    if [ -f "/home/ubuntu/deploy_nginx.yml" ]
                                     then
                                         ansible-playbook -i /home/ubuntu/hosts /home/ubuntu/ansible/docker_nginx.yml
                                     else
-                                        echo "Playbook docker_install.yml not found in /home/ubuntu/ansible"
+                                        echo "Playbook deploy_nginx.yml not found in /home/ubuntu/ansible"
                                         exit 1
                                     fi
                                 '
@@ -116,11 +116,11 @@ pipeline {
                                         sudo DEBIAN_FRONTEND=noninteractive apt-get update
                                         sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ansible
                                     fi
-                                    if [ -f "/home/ubuntu/docker_install.yml" ]
+                                    if [ -f "/home/ubuntu/deploy_nginx.yml" ]
                                     then
                                         ansible-playbook -i /home/ubuntu/hosts /home/ubuntu/ansible/docker_nginx.yml
                                     else
-                                        echo "Playbook docker_install.yml not found in /home/ubuntu/ansible"
+                                        echo "Playbook deploy_nginx.yml not found in /home/ubuntu/ansible"
                                         exit 1
                                     fi
                                 '
