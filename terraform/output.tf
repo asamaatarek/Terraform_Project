@@ -23,11 +23,13 @@ output "bastion_public_ip_AZ1" {
 }
 output "bastion_public_ip_AZ2" {
   value = aws_instance.bastion_az2.public_ip
-  description = "Public IP of the Bastion Host"
+  description = "private IP of the private instence"
 }
-output "private_instance_ips" {
-  value = {
-    az1 = aws_instance.private_instance_az1.private_ip
-    az2 = aws_instance.private_instance_az2.private_ip
-  }
+output "private_ip_az1" {
+  value = aws_instance.private_instance_az1.private_ip
+  description = "private IP of the private instence"
+}
+output "private_ip_az2" {
+  value = aws_instance.private_instance_az2.private_ip
+  description = "private IP of the private instence"
 }
