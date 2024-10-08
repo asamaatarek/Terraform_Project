@@ -47,8 +47,8 @@ pipeline {
                         echo "Bastion IP AZ1: ${BASTION_IP_AZ1}"
                         echo "Bastion IP AZ2: ${BASTION_IP_AZ2}"
                         
-                        privateIPsAZ1 = sh(script: 'terraform output -raw private_instance_az1', returnStdout: true).trim()
-                        privateIPsAZ2 = sh(script: 'terraform output -raw private_instance_az2', returnStdout: true).trim()
+                        privateIPsAZ1 = sh(script: 'terraform output -raw private_instance_ips.az1', returnStdout: true).trim()
+                        privateIPsAZ2 = sh(script: 'terraform output -raw private_instance_ips.az2', returnStdout: true).trim()
                   
                     }
                 }
@@ -65,6 +65,13 @@ pipeline {
                                 scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/ ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
                             """
                         }
+                        writeFile file: 'ansible/roles/docker_nginx/tests/inventory', text: """
+                        [private_servers]
+                        ${privateIPsAZ1}
+
+                        private_servers:vars]
+                        ansible_user=ubuntu
+                        """
                     } else {
                         error "Bastion public IP 1 not available."
                     }
@@ -76,6 +83,13 @@ pipeline {
                                 scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/ ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/
                             """
                         }
+                        writeFile file: 'ansible/roles/docker_nginx/tests/inventory', text: """
+                        [private_servers]
+                        ${privateIPsAZ1}
+
+                        private_servers:vars]
+                        ansible_user=ubuntu
+                        """
                     } else {
                         error "Bastion public IP 2 not available."
                     }
@@ -84,7 +98,7 @@ pipeline {
         }
         stage('Generate Ansible Inventory') {
             steps {
-                script {  
+                script { 
                 writeFile file: 'ansible/roles/docker_nginx/tests/inventory', text: """
                 [private_servers]
                 ${privateIPsAZ1}
@@ -100,7 +114,7 @@ pipeline {
 
         stage('Run Ansible Playbook') {
             steps {
-                script {
+                script{
                     if (BASTION_IP_AZ1 != null && BASTION_IP_AZ1 != '') {
                         withCredentials([sshUserPrivateKey(credentialsId: 'tera-pem', keyFileVariable: 'PEM_FILE', usernameVariable: 'ubuntu')]) {
                             sh """#!/bin/bash
