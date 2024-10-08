@@ -65,13 +65,6 @@ pipeline {
                                 scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/roles ansible/deploy_nginx.yml ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
                             """
                         }
-                        writeFile file: 'roles/docker_nginx/tests/inventory', text: """
-                        [private_servers]
-                        ${privateIPsAZ1}
-
-                        private_servers:vars]
-                        ansible_user=ubuntu
-                        """
                     } else {
                         error "Bastion public IP 1 not available."
                     }
@@ -83,23 +76,16 @@ pipeline {
                                 scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/roles ansible/deploy_nginx.yml ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/
                             """
                         }
-                        writeFile file: 'roles/docker_nginx/tests/inventory', text: """
-                        [private_servers]
-                        ${privateIPsAZ2}
-
-                        private_servers:vars]
-                        ansible_user=ubuntu
-                        """
                     } else {
                         error "Bastion public IP 2 not available."
                     }
                 }
             }
         }
-        /*stage('Generate Ansible Inventory') {
+        stage('Generate Ansible Inventory') {
             steps {
                 script { 
-                writeFile file: 'ansible/roles/docker_nginx/tests/inventory', text: """
+                writeFile file: 'roles/docker_nginx/tests/inventory', text: """
                 [private_servers]
                 ${privateIPsAZ1}
                 ${privateIPsAZ2}
@@ -110,7 +96,7 @@ pipeline {
                     
                 }
             }
-        }*/
+        }
 
         stage('Run Ansible Playbook') {
             steps {
@@ -120,8 +106,10 @@ pipeline {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                 ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
-                                    echo "Listing files in /home/ubuntu/ansible:"
+                                    echo "Listing files in /home/ubuntu:"
                                     ls -l /home/ubuntu/
+                                    echo "Listing inventory file:"
+                                    cat /home/ubuntu/roles/docker_nginx/tests/inventory
                                     if ! command -v ansible-playbook &> /dev/null
                                     then
                                         echo "Ansible not found. Installing..."
@@ -149,6 +137,8 @@ pipeline {
                                 ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ2} '
                                     echo "Listing files in /home/ubuntu:"
                                     ls -l /home/ubuntu/
+                                    echo "Listing inventory file:"
+                                    cat /home/ubuntu/roles/docker_nginx/tests/inventory
                                     if ! command -v ansible-playbook &> /dev/null
                                     then
                                         echo "Ansible not found. Installing..."

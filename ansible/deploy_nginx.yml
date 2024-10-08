@@ -1,6 +1,6 @@
 ---
 - name: Install Docker and Deploy Nginx
-  hosts: private_instances
+  hosts: private_servers
   become: true
   roles:
     - docker_install
