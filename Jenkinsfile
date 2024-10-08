@@ -47,16 +47,11 @@ pipeline {
                         echo "Bastion IP AZ1: ${BASTION_IP_AZ1}"
                         echo "Bastion IP AZ2: ${BASTION_IP_AZ2}"
                         
-                        privateIPsAZ1 = sh(script: 'terraform output -raw private_instance_ips.az1', returnStdout: true).trim()
-                        privateIPsAZ2 = sh(script: 'terraform output -raw private_instance_ips.az2', returnStdout: true).trim()
+                        privateIPsAZ1 = sh(script: 'terraform output -raw private_ip_az1', returnStdout: true).trim()
+                        privateIPsAZ2 = sh(script: 'terraform output -raw private_ip_az2', returnStdout: true).trim()
                   
                     }
                 }
-            }
-        }
-        stage('Terraform destroy') {
-            steps {
-                sh 'cd terraform/ ; terraform destroy -auto-approve'
             }
         }
 
@@ -67,7 +62,7 @@ pipeline {
                         withCredentials([sshUserPrivateKey(credentialsId: 'tera-pem', keyFileVariable: 'PEM_FILE', usernameVariable: 'ubuntu')]) {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
-                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/ ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
+                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/roles ansible/deploy_nginx.yml ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
                             """
                         }
                         writeFile file: 'ansible/roles/docker_nginx/tests/inventory', text: """
@@ -85,12 +80,12 @@ pipeline {
                         withCredentials([sshUserPrivateKey(credentialsId: 'tera-pem', keyFileVariable: 'PEM_FILE', usernameVariable: 'ubuntu')]) {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
-                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/ ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/
+                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/roles ansilble/deploy_nginx.yml ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/
                             """
                         }
                         writeFile file: 'ansible/roles/docker_nginx/tests/inventory', text: """
                         [private_servers]
-                        ${privateIPsAZ1}
+                        ${privateIPsAZ2}
 
                         private_servers:vars]
                         ansible_user=ubuntu
