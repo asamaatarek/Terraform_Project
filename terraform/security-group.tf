@@ -88,3 +88,16 @@ resource "aws_instance" "private_instance_az2" {
     Name = "private-instance-az2"
   }
 }
+
+# Private IPs 
+resource "local_file" "ansible_inventory" {
+  filename = "${path.module}/ansible/roles/docker_nginx/tests/inventory"
+  content = <<EOT
+  [private_servers]
+  ${aws_instance.private_instance_az1.private_ip} 
+  ${aws_instance.private_instance_az2.private_ip}
+  
+  [private_servers:vars]
+  ansible_user=ubuntu
+  EOT
+}
