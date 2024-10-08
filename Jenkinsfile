@@ -54,6 +54,11 @@ pipeline {
                 }
             }
         }
+        stage('Terraform destroy') {
+            steps {
+                sh 'cd terraform/ ; terraform destroy -auto-approve'
+            }
+        }
 
         stage('Copy Ansible Files') {
             steps {
@@ -96,7 +101,7 @@ pipeline {
                 }
             }
         }
-        stage('Generate Ansible Inventory') {
+        /*stage('Generate Ansible Inventory') {
             steps {
                 script { 
                 writeFile file: 'ansible/roles/docker_nginx/tests/inventory', text: """
@@ -110,7 +115,7 @@ pipeline {
                     
                 }
             }
-        }
+        }*/
 
         stage('Run Ansible Playbook') {
             steps {
