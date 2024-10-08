@@ -7,6 +7,8 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
         BASTION_IP_AZ1 = ''
         BASTION_IP_AZ2 = ''
+        privateIPsAZ1 = ''
+        privateIPsAZ2 = ''
     }
     agent any
 
@@ -36,7 +38,7 @@ pipeline {
             }
         }
 
-        stage('Fetch Bastion IP') {
+        stage('Fetch Bastion IP And Private IP') {
             steps {
                  dir("terraform") {
                     script {
@@ -44,6 +46,10 @@ pipeline {
                         BASTION_IP_AZ2 = sh(script: 'terraform output -raw bastion_public_ip_AZ2', returnStdout: true).trim()
                         echo "Bastion IP AZ1: ${BASTION_IP_AZ1}"
                         echo "Bastion IP AZ2: ${BASTION_IP_AZ2}"
+                        
+                        privateIPsAZ1 = sh(script: 'terraform output -raw private_instance_az1', returnStdout: true).trim()
+                        privateIPsAZ2 = sh(script: 'terraform output -raw private_instance_az2', returnStdout: true).trim()
+                  
                     }
                 }
             }
@@ -78,10 +84,7 @@ pipeline {
         }
         stage('Generate Ansible Inventory') {
             steps {
-                script {
-                def privateIPsAZ1 = sh(script: 'terraform output -raw private_instance_az1', returnStdout: true).trim()
-                def privateIPsAZ2 = sh(script: 'terraform output -raw private_instance_az2', returnStdout: true).trim()
-                    
+                script {  
                 writeFile file: 'ansible/roles/docker_nginx/tests/inventory', text: """
                 [private_servers]
                 ${privateIPsAZ1}
