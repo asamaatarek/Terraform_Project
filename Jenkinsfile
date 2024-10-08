@@ -85,6 +85,8 @@ pipeline {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                 ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
+                                    echo "Listing files in /home/ubuntu/ansible:"
+                                    ls -l /home/ubuntu/ansible
                                     if ! command -v ansible-playbook &> /dev/null
                                     then
                                         echo "Ansible not found. Installing..."
@@ -110,6 +112,8 @@ pipeline {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                 ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ2} '
+                                    echo "Listing files in /home/ubuntu/ansible:"
+                                    ls -l /home/ubuntu/ansible
                                     if ! command -v ansible-playbook &> /dev/null
                                     then
                                         echo "Ansible not found. Installing..."
