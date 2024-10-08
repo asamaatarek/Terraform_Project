@@ -62,10 +62,10 @@ pipeline {
                         withCredentials([sshUserPrivateKey(credentialsId: 'tera-pem', keyFileVariable: 'PEM_FILE', usernameVariable: 'ubuntu')]) {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
-                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r /ansible/roles /ansible/deploy_nginx.yml ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
+                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/roles ansible/deploy_nginx.yml ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
                             """
                         }
-                        writeFile file: 'ansible/roles/docker_nginx/tests/inventory', text: """
+                        writeFile file: 'roles/docker_nginx/tests/inventory', text: """
                         [private_servers]
                         ${privateIPsAZ1}
 
@@ -80,10 +80,10 @@ pipeline {
                         withCredentials([sshUserPrivateKey(credentialsId: 'tera-pem', keyFileVariable: 'PEM_FILE', usernameVariable: 'ubuntu')]) {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
-                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r /ansible/roles /ansible/deploy_nginx.yml ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/
+                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/roles ansible/deploy_nginx.yml ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/
                             """
                         }
-                        writeFile file: 'ansible/roles/docker_nginx/tests/inventory', text: """
+                        writeFile file: 'roles/docker_nginx/tests/inventory', text: """
                         [private_servers]
                         ${privateIPsAZ2}
 
@@ -121,16 +121,16 @@ pipeline {
                                 chmod 400 $PEM_FILE
                                 ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
                                     echo "Listing files in /home/ubuntu/ansible:"
-                                    ls -l /home/ubuntu/ansible/
+                                    ls -l /home/ubuntu/
                                     if ! command -v ansible-playbook &> /dev/null
                                     then
                                         echo "Ansible not found. Installing..."
                                         sudo DEBIAN_FRONTEND=noninteractive apt-get update
                                         sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ansible
                                     fi
-                                    if [ -f "/home/ubuntu/ansible/deploy_nginx.yml" ]
+                                    if [ -f "/home/ubuntu/deploy_nginx.yml" ]
                                     then
-                                        ansible-playbook -i /home/ubuntu/ansible/roles/docker_nginx/tests/inventory /home/ubuntu/ansible/deploy_nginx.yml
+                                        ansible-playbook -i /home/ubuntu/roles/docker_nginx/tests/inventory /home/ubuntu/deploy_nginx.yml
                                     else
                                         echo "Playbook deploy_nginx.yml not found in /home/ubuntu/ansible"
                                         exit 1
@@ -147,8 +147,8 @@ pipeline {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                 ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ2} '
-                                    echo "Listing files in /home/ubuntu/ansible:"
-                                    ls -l /home/ubuntu/ansible/
+                                    echo "Listing files in /home/ubuntu:"
+                                    ls -l /home/ubuntu/
                                     if ! command -v ansible-playbook &> /dev/null
                                     then
                                         echo "Ansible not found. Installing..."
@@ -157,9 +157,9 @@ pipeline {
                                     fi
                                     if [ -f "/home/ubuntu/ansible/deploy_nginx.yml" ]
                                     then
-                                        ansible-playbook -i /home/ubuntu/ansible/roles/docker_nginx/tests/inventory /home/ubuntu/ansible/deploy_nginx.yml
+                                        ansible-playbook -i /home/ubuntu/roles/docker_nginx/tests/inventory /home/ubuntu/deploy_nginx.yml
                                     else
-                                        echo "Playbook deploy_nginx.yml not found in /home/ubuntu/ansible/"
+                                        echo "Playbook deploy_nginx.yml not found in /home/ubuntu/"
                                         exit 1
                                     fi
                                 '
