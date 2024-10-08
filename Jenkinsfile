@@ -76,6 +76,25 @@ pipeline {
                 }
             }
         }
+        stage('Generate Ansible Inventory') {
+            steps {
+                dir(terraform){
+                    script {
+                    def privateIPsAZ1 = sh(script: 'terraform output -raw private_instance_az1', returnStdout: true).trim()
+                    def privateIPsAZ2 = sh(script: 'terraform output -raw private_instance_az2', returnStdout: true).trim()
+                    
+                    writeFile file: 'inventory.ini', text: """
+                    [private_servers]
+                    ${privateIPsAZ1}
+                    ${privateIPsAZ2}
+
+                    [private_servers:vars]
+                    ansible_user=ubuntu
+                    """
+                    }
+                }
+            }
+        }
 
         stage('Run Ansible Playbook') {
             steps {
@@ -95,7 +114,7 @@ pipeline {
                                     fi
                                     if [ -f "/home/ubuntu/ansible/deploy_nginx.yml" ]
                                     then
-                                        ansible-playbook -i /home/ubuntu/hosts /home/ubuntu/ansible/deploy_nginx.yml
+                                        ansible-playbook -i /home/ubuntu/ansible/roles/docker_nginx/tests/inventory /home/ubuntu/ansible/deploy_nginx.yml
                                     else
                                         echo "Playbook deploy_nginx.yml not found in /home/ubuntu/ansible"
                                         exit 1
@@ -122,7 +141,7 @@ pipeline {
                                     fi
                                     if [ -f "/home/ubuntu/ansible/deploy_nginx.yml" ]
                                     then
-                                        ansible-playbook -i /home/ubuntu/hosts /home/ubuntu/ansible/deploy_nginx.yml
+                                        ansible-playbook -i /home/ubuntu/ansible/roles/docker_nginx/tests/inventory /home/ubuntu/ansible/deploy_nginx.yml
                                     else
                                         echo "Playbook deploy_nginx.yml not found in /home/ubuntu/ansible/"
                                         exit 1
