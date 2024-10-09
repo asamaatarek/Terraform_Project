@@ -84,16 +84,15 @@ pipeline {
         }
         stage('Generate Ansible Inventory') {
             steps {
-                script { 
-                writeFile file: 'roles/docker_nginx/tests/inventory', text: """
-                [private_servers]
-                ${privateIPsAZ1}
-                ${privateIPsAZ2}
+                script {
+                    writeFile file: 'roles/docker_nginx/tests/inventory', text: """
+                    [private_servers]
+                    ${privateIPsAZ1}
+                    ${privateIPsAZ2}
 
-                [private_servers:vars]
-                ansible_user=ubuntu
-                """
-                    
+                    [private_servers:vars]
+                    ansible_user=ubuntu
+                    """
                 }
             }
         }
@@ -124,6 +123,10 @@ pipeline {
                                         exit 1
                                     fi
                                 '
+                                ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
+                                    echo "Testing SSH connection to private server ${privateIPsAZ1}..."
+                                    ssh -o StrictHostKeyChecking=no -i /path/to/private_key ubuntu@${privateIPsAZ1} "echo SSH connection successful"
+                                '
                             """
                         }
                     } else {
@@ -152,6 +155,10 @@ pipeline {
                                         echo "Playbook deploy_nginx.yml not found in /home/ubuntu/"
                                         exit 1
                                     fi
+                                '
+                                ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
+                                    echo "Testing SSH connection to private server ${privateIPsAZ1}..."
+                                    ssh -o StrictHostKeyChecking=no -i /path/to/private_key ubuntu@${privateIPsAZ1} "echo SSH connection successful"
                                 '
                             """
                         }
