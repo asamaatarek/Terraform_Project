@@ -90,6 +90,7 @@ pipeline {
                     [private_servers]
                     ${privateIPsAZ1}
                     ${privateIPsAZ2}
+
                     [private_servers:vars]
                     ansible_user=ubuntu
                     """
@@ -109,6 +110,7 @@ pipeline {
                                 ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
                                     ssh -o StrictHostKeyChecking=no ubuntu@${privateIPsAZ1} "
                                 	chmod 600 ~/.ssh/authorized_keys
+                                    exit 1
                             	    "
                                     echo "Listing files in /home/ubuntu:"
                                     ls -l /home/ubuntu/
