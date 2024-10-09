@@ -85,19 +85,20 @@ pipeline {
         stage('Generate Ansible Inventory') {
             steps {
                 script {
-                    writeFile file: 'roles/docker_nginx/tests/inventory', text: """
+                    
+                    def inventoryContent = """
                     [private_servers]
                     ${privateIPsAZ1}
                     ${privateIPsAZ2}
 
-
                     [private_servers:vars]
                     ansible_user=ubuntu
-                    ansible_ssh_private_key_file=tera.pem
                     """
+                    writeFile file: 'roles/docker_nginx/tests/inventory', text: inventoryContent
                 }
             }
         }
+
 
         stage('Run Ansible Playbook') {
             steps {
@@ -107,7 +108,7 @@ pipeline {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                 ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
-                                    ssh -o StrictHostKeyChecking=no ubuntu@${privateIPsAZ2} "
+                                    ssh -o StrictHostKeyChecking=no ubuntu@${privateIPsAZ1} "
                                 	chmod 600 ~/.ssh/authorized_keys
                             	    "
                                     echo "Listing files in /home/ubuntu:"
@@ -122,7 +123,7 @@ pipeline {
                                     fi
                                     if [ -f "/home/ubuntu/deploy_nginx.yml" ]
                                     then
-                                        ansible-playbook -i /home/ubuntu/roles/docker_nginx/tests/inventory /home/ubuntu/deploy_nginx.yml
+                                        ansible-playbook -i /home/ubuntu/roles/docker_nginx/tests/inventory /home/ubuntu/deploy_nginx.yml --private-key=$PEM_FILE
                                     else
                                         echo "Playbook deploy_nginx.yml not found in /home/ubuntu/ansible"
                                         exit 1
@@ -153,7 +154,7 @@ pipeline {
                                     fi
                                     if [ -f "/home/ubuntu/ansible/deploy_nginx.yml" ]
                                     then
-                                        ansible-playbook -i /home/ubuntu/roles/docker_nginx/tests/inventory /home/ubuntu/deploy_nginx.yml
+                                        ansible-playbook -i /home/ubuntu/roles/docker_nginx/tests/inventory /home/ubuntu/deploy_nginx.yml --private-key=$PEM_FILE
                                     else
                                         echo "Playbook deploy_nginx.yml not found in /home/ubuntu/"
                                         exit 1
