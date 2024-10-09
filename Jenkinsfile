@@ -125,7 +125,7 @@ pipeline {
                                 '
                                 ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
                                     echo "Testing SSH connection to private server ${privateIPsAZ1}..."
-                                    ssh -o StrictHostKeyChecking=no -i /path/to/private_key ubuntu@${privateIPsAZ1} "echo SSH connection successful"
+                                    ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${privateIPsAZ1} "echo SSH connection successful"
                                 '
                             """
                         }
@@ -158,7 +158,7 @@ pipeline {
                                 '
                                 ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
                                     echo "Testing SSH connection to private server ${privateIPsAZ1}..."
-                                    ssh -o StrictHostKeyChecking=no -i /path/to/private_key ubuntu@${privateIPsAZ1} "echo SSH connection successful"
+                                    ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${privateIPsAZ1} "echo SSH connection successful"
                                 '
                             """
                         }
