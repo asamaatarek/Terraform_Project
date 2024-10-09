@@ -90,7 +90,7 @@ pipeline {
                 ${privateIPsAZ1}
                 ${privateIPsAZ2}
 
-                private_servers:vars]
+                [private_servers:vars]
                 ansible_user=ubuntu
                 """
                     
