@@ -90,8 +90,10 @@ pipeline {
                     ${privateIPsAZ1}
                     ${privateIPsAZ2}
 
+
                     [private_servers:vars]
                     ansible_user=ubuntu
+                    ansible_ssh_private_key_file=tera.pem
                     """
                 }
             }
@@ -105,6 +107,9 @@ pipeline {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                 ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
+                                    ssh -o StrictHostKeyChecking=no ubuntu@${privateIPsAZ2} "
+                                	chmod 600 ~/.ssh/authorized_keys
+                            	    "
                                     echo "Listing files in /home/ubuntu:"
                                     ls -l /home/ubuntu/
                                     echo "Listing inventory file:"
@@ -123,11 +128,9 @@ pipeline {
                                         exit 1
                                     fi
                                 '
-                                ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
-                                    echo "Testing SSH connection to private server ${privateIPsAZ1}..."
-                                    ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${privateIPsAZ1} "echo SSH connection successful"
-                                '
+                                cd terraform/ ; terraform destroy -auto-approve
                             """
+
                         }
                     } else {
                         error "Bastion public IP 1 not available."
