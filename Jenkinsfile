@@ -94,7 +94,7 @@ pipeline {
 			[private_servers:vars]
 			ansible_usesr=ubuntu
 			"""	
-                    writeFile file: 'roles/docker_nginx/tests/inventory', text: inventoryContent.trim()
+                    writeFile file: 'roles/docker_nginx/tests/inventory', text: inventoryContent
                 }
             }
         }
