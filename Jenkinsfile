@@ -86,9 +86,8 @@ pipeline {
         }
         stage('Generate Ansible Inventory') {
             steps {
-                script {
-                    
-                    def inventoryContent = """
+                script { 
+                    def inventoryContent = """\
 			[private_servers]
 			${privateIPsAZ1}
 			${privateIPsAZ2}
