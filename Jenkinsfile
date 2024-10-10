@@ -107,9 +107,9 @@ pipeline {
                         withCredentials([sshUserPrivateKey(credentialsId: 'tera-pem', keyFileVariable: 'PEM_FILE', usernameVariable: 'ubuntu')]) {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
-                                ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
-                                    ssh -o StrictHostKeyChecking=no ubuntu@${privateIPsAZ1} "
-                                	chmod 600 ~/.ssh/authorized_keys
+                                 ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
+                                    ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${privateIPsAZ1} "
+					echo "Private"
                                     exit 1
                             	    "
                                     echo "Listing files in /home/ubuntu:"
