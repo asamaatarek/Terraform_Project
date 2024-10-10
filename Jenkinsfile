@@ -89,13 +89,12 @@ pipeline {
                 script {
                     
                     def inventoryContent = """
-                    [private_servers]
-                    ${privateIPsAZ1}
-                    ${privateIPsAZ2}
-
-                    [private_servers:vars]
-                    ansible_user=ubuntu
-                    """
+			[private_servers]
+			${privateIPsAZ1}
+			${privateIPsAZ2}
+			[private_servers:vars]
+			ansible_usesr=ubuntu
+			"""	
                     writeFile file: 'roles/docker_nginx/tests/inventory', text: inventoryContent.trim()
                 }
             }
