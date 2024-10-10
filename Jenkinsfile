@@ -93,7 +93,7 @@ pipeline {
                     ${privateIPsAZ1}
                     ${privateIPsAZ2}
 
-                    [[private_servers:vars]]
+                    [[private_servers:vars]
                     ansible_user=ubuntu
                     """
                     writeFile file: 'roles/docker_nginx/tests/inventory', text: inventoryContent
@@ -127,7 +127,7 @@ pipeline {
                                     fi
                                     if [ -f "/home/ubuntu/deploy_nginx.yml" ]
                                     then
-                                        ansible-playbook -i /home/ubuntu/roles/docker_nginx/tests/inventory /home/ubuntu/deploy_nginx.yml --private-key=private_key.pem
+                                        ansible-playbook -i /home/ubuntu/roles/docker_nginx/tests/inventory /home/ubuntu/deploy_nginx.yml --private-key=/home/ubuntu/private_key.pem
                                     else
                                         echo "Playbook deploy_nginx.yml not found in /home/ubuntu/ansible"
                                         exit 1
