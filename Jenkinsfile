@@ -96,6 +96,7 @@ pipeline {
 			"""	
 		    echo "Generated Inventory Content: ${inventoryContent}"
                     writeFile file: 'roles/docker_nginx/tests/inventory', text: inventoryContent
+		    echo "Generated Inventory Content: ${inventoryContent}"
                 }
             }
         }
