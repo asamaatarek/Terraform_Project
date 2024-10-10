@@ -63,6 +63,8 @@ pipeline {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                 scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/roles ansible/deploy_nginx.yml ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
+				scp -o StrictHostKeyChecking=no -i $PEM_FILE $PEM_FILE ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/private_key.pem
+
                             """
                         }
                     } else {
@@ -108,7 +110,8 @@ pipeline {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                  ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
-                                    ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${privateIPsAZ1} "
+				    chmod 400 /home/ubuntu/private_key.pem
+                                    ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${privateIPsAZ1} "
 					echo "Private"
                                     exit 1
                             	    "
