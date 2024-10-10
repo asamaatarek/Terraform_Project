@@ -94,6 +94,7 @@ pipeline {
 			[private_servers:vars]
 			ansible_usesr=ubuntu
 			"""	
+		    echo "Generated Inventory Content: ${inventoryContent}"
                     writeFile file: 'roles/docker_nginx/tests/inventory', text: inventoryContent
                 }
             }
