@@ -84,23 +84,24 @@ pipeline {
                 }
             }
         }
-        stage('Generate Ansible Inventory') {
-            steps {
-                script { 
-                    def inventoryContent = """\
-			[private_servers]
-			${privateIPsAZ1}
-			${privateIPsAZ2}
-			[private_servers:vars]
-			ansible_usesr=ubuntu
-			"""	
-		    echo "Generated Inventory Content: ${inventoryContent}"
-                    writeFile file: 'roles/docker_nginx/tests/inventory', text: inventoryContent
-		    echo "Generated Inventory Content: ${inventoryContent}"
-                }
-            }
-        }
+stage('Generate Ansible Inventory') {
+    steps {
+        script {
+            def inventoryContent = """\
+[private_servers]
+${privateIPsAZ1.trim()}
+${privateIPsAZ2.trim()}
 
+[private_servers:vars]
+ansible_user=ubuntu
+""".trim()
+
+            echo "Generated Inventory Content: ${inventoryContent}"
+            writeFile file: 'roles/docker_nginx/tests/inventory', text: inventoryContent
+            sh "cat roles/docker_nginx/tests/inventory"
+        }
+    }
+}
 
         stage('Run Ansible Playbook') {
             steps {
@@ -110,9 +111,9 @@ pipeline {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                  ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
-				    chmod 400 /home/ubuntu/private_key.pem
+				                    chmod 400 /home/ubuntu/private_key.pem
                                     ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${privateIPsAZ1} "
-					echo "Private"
+					                    echo "Private"
                                     exit 1
                             	    "
                                     echo "Listing files in /home/ubuntu:"
