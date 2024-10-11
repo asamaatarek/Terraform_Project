@@ -91,7 +91,6 @@ stage('Generate Ansible Inventory') {
             def inventoryContent = """\
 [private_servers]
 ${privateIPsAZ1.trim()}
-${privateIPsAZ2.trim()}
 
 [private_servers:vars]
 ansible_user=ubuntu
