@@ -62,7 +62,7 @@ pipeline {
                         withCredentials([sshUserPrivateKey(credentialsId: 'tera-pem', keyFileVariable: 'PEM_FILE', usernameVariable: 'ubuntu')]) {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
-                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/roles/docker_nginx/tests/inventory ansible/roles/docker_nginx/tests/test.yml ansible/deploy_nginx.yml ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
+                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/roles/ ansible/deploy_nginx.yml ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
                                 echo "Checking inventory file on Bastion after SCP:"
                                 cat /home/ubuntu/roles/docker_nginx/tests/inventory
 				                scp -o StrictHostKeyChecking=no -i $PEM_FILE $PEM_FILE ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/private_key.pem
