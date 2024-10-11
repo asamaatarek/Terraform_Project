@@ -96,6 +96,7 @@ resource "local_file" "ansible_inventory" {
   [private_servers]
   ${aws_instance.private_instance_az1.private_ip} 
   ${aws_instance.private_instance_az2.private_ip}
+  
   [private_servers:vars]
   ansible_user=ubuntu
   EOT
