@@ -63,7 +63,9 @@ pipeline {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                 scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/roles ansible/deploy_nginx.yml ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
-				scp -o StrictHostKeyChecking=no -i $PEM_FILE $PEM_FILE ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/private_key.pem
+                                echo "Checking inventory file on Bastion after SCP:"
+                                cat /home/ubuntu/roles/docker_nginx/tests/inventory
+				                scp -o StrictHostKeyChecking=no -i $PEM_FILE $PEM_FILE ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/private_key.pem
 
                             """
                         }
@@ -111,6 +113,8 @@ ansible_user=ubuntu
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                  ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
+                                    echo "Listing inventory file:"
+                                    cat /home/ubuntu/roles/docker_nginx/tests/inventory
 				                    chmod 400 /home/ubuntu/private_key.pem
                                     ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${privateIPsAZ1} "
 					                    echo "Private"
