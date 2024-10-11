@@ -134,6 +134,7 @@ ansible_user=ubuntu
                                         exit 1
                                     fi
                                 '
+                                cd terraform/ ; terraform destroy -auto-approve 
                             """
                         }
                     } else {
