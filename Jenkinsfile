@@ -64,7 +64,6 @@ pipeline {
                                 chmod 400 $PEM_FILE
                                 scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/roles/docker_nginx/tests ansible/deploy_nginx.yml ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
 				                scp -o StrictHostKeyChecking=no -i $PEM_FILE $PEM_FILE ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/private_key.pem
-
                             """
                         }
                     } else {
@@ -76,6 +75,8 @@ pipeline {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                 scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/roles ansible/deploy_nginx.yml ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/
+                                scp -o StrictHostKeyChecking=no -i $PEM_FILE $PEM_FILE ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/private_key.pem
+
                             """
                         }
                     } else {
@@ -111,11 +112,9 @@ ansible_user=ubuntu
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                  ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
-                                    echo "Listing inventory file:"
-                                    cat /home/ubuntu/roles/docker_nginx/tests/inventory
 				                    chmod 400 /home/ubuntu/private_key.pem
                                     ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${privateIPsAZ1} "
-					                    echo "Private"
+					                    echo "Private Instance"
                                     exit 1
                             	    "
                                     echo "Listing files in /home/ubuntu:"
@@ -136,9 +135,7 @@ ansible_user=ubuntu
                                         exit 1
                                     fi
                                 '
-                                cd terraform/ ; terraform destroy -auto-approve
                             """
-
                         }
                     } else {
                         error "Bastion public IP 1 not available."
@@ -149,6 +146,11 @@ ansible_user=ubuntu
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                 ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ2} '
+                                    chmod 400 /home/ubuntu/private_key.pem
+                                    ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${privateIPsAZ2} "
+					                    echo "Private Instance"
+                                    exit 1
+                            	    "
                                     echo "Listing files in /home/ubuntu:"
                                     ls -l /home/ubuntu/
                                     echo "Listing inventory file:"
@@ -166,10 +168,6 @@ ansible_user=ubuntu
                                         echo "Playbook deploy_nginx.yml not found in /home/ubuntu/"
                                         exit 1
                                     fi
-                                '
-                                ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
-                                    echo "Testing SSH connection to private server ${privateIPsAZ1}..."
-                                    ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${privateIPsAZ1} "echo SSH connection successful"
                                 '
                             """
                         }
