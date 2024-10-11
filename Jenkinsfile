@@ -92,7 +92,7 @@ stage('Generate Ansible Inventory') {
 ${privateIPsAZ1.trim()}
 ${privateIPsAZ2.trim()}
 
-private_servers:vars
+[private_servers:vars]
 ansible_user=ubuntu
 """.trim()
 
