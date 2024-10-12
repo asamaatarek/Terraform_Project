@@ -67,6 +67,8 @@ pipeline {
                                 ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
                                     echo "Listing files in /home/ubuntu:"
                                     ls -l /home/ubuntu/ 
+                                    echo "Listing files in /home/ubuntu/ansible:"
+                                    ls -l /home/ubuntu/ansible/ 
                                     '
                                 cd terraform/ ; terraform destroy -auto-approve
                             """
