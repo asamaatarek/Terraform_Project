@@ -74,9 +74,14 @@ resource "aws_instance" "private_instance_az1" {
   tags = {
     Name = "private-instance-az1"
   }
+  /*provisioner "local-exec" {
+    command = <<EOT
+      echo '[private_servers]' > ./inventory && \
+      echo '${self.private_ip}' >> ./inventory
+    EOT
+  }*/
 }
-
-# Private EC2 Instance in AZ1
+# Private EC2 Instance in AZ2
 resource "aws_instance" "private_instance_az2" {
   ami           = "ami-0e86e20dae9224db8"
   instance_type = "t2.micro"
@@ -87,11 +92,21 @@ resource "aws_instance" "private_instance_az2" {
   tags = {
     Name = "private-instance-az2"
   }
+  /*provisioner "local-exec" {
+    command = <<EOT
+      echo '${self.private_ip}' >> ./inventory && \
+      if ! grep -q '[private_servers:vars]' ./inventory; then \
+        echo '[private_servers:vars]' >> ./inventory && \
+        echo 'ansible_user=ubuntu' >> ./inventory; \
+      fi
+    EOT
+  }*/
 }
+
 
 # Private IPs 
 resource "local_file" "ansible_inventory" {
-  filename = "${path.module}/ansible/roles/docker_nginx/tests/inventory"
+  filename = "${path.module}../ansible/roles/docker_install/tests/inventory"
   content = <<EOT
   [private_servers]
   ${aws_instance.private_instance_az1.private_ip} 
@@ -100,4 +115,5 @@ resource "local_file" "ansible_inventory" {
   [private_servers:vars]
   ansible_user=ubuntu
   EOT
+
 }

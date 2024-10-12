@@ -62,7 +62,7 @@ pipeline {
                         withCredentials([sshUserPrivateKey(credentialsId: 'tera-pem', keyFileVariable: 'PEM_FILE', usernameVariable: 'ubuntu')]) {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
-                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/roles/docker_nginx/tests ansible/deploy_nginx.yml ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
+                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ../ansible ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
 				                scp -o StrictHostKeyChecking=no -i $PEM_FILE $PEM_FILE ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/private_key.pem
                             """
                         }
@@ -74,7 +74,7 @@ pipeline {
                         withCredentials([sshUserPrivateKey(credentialsId: 'tera-pem', keyFileVariable: 'PEM_FILE', usernameVariable: 'ubuntu')]) {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
-                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/roles ansible/deploy_nginx.yml ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/
+                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ../ansible ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/
                                 scp -o StrictHostKeyChecking=no -i $PEM_FILE $PEM_FILE ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/private_key.pem
 
                             """
@@ -84,25 +84,27 @@ pipeline {
                     }
                 }
             }
-        }
+        }/*
 stage('Generate Ansible Inventory') {
     steps {
         script {
             def inventoryContent = """\
 [private_servers]
 ${privateIPsAZ1.trim()}
+${privateIPsAZ2.trim()}
+
 
 [private_servers:vars]
 ansible_user=ubuntu
 """.trim()
 
             echo "Generated Inventory Content: ${inventoryContent}"
-            writeFile file: 'roles/docker_nginx/tests/inventory', text: inventoryContent
+            writeFile file: 'roles/docker_install/tests/inventory', text: inventoryContent
             sh "cat roles/docker_nginx/tests/inventory"
         }
     }
 }
-
+*/
         stage('Run Ansible Playbook') {
             steps {
                 script{
@@ -111,7 +113,7 @@ ansible_user=ubuntu
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                  ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
-				                    chmod 400 /home/ubuntu/private_key.pem
+				                    chmod 600 /home/ubuntu/private_key.pem
                                     ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${privateIPsAZ1} "
 					                    echo "Private Instance"
                                     exit 1
@@ -119,7 +121,7 @@ ansible_user=ubuntu
                                     echo "Listing files in /home/ubuntu:"
                                     ls -l /home/ubuntu/
                                     echo "Listing inventory file:"
-                                    cat /home/ubuntu/roles/docker_nginx/tests/inventory
+                                    cat /home/ubuntu/ansible/roles/docker_nginx/tests/inventory
                                     if ! command -v ansible-playbook &> /dev/null
                                     then
                                         echo "Ansible not found. Installing..."
@@ -128,7 +130,7 @@ ansible_user=ubuntu
                                     fi
                                     if [ -f "/home/ubuntu/deploy_nginx.yml" ]
                                     then
-                                        ansible-playbook -i /home/ubuntu/roles/docker_nginx/tests/inventory /home/ubuntu/deploy_nginx.yml --private-key=/home/ubuntu/private_key.pem
+                                        ansible-playbook -i /home/ubuntu/ansible/roles/docker_install/tests/inventory /home/ubuntu/ansible/deploy_nginx.yml --private-key=/home/ubuntu/private_key.pem
                                     else
                                         echo "Playbook deploy_nginx.yml not found in /home/ubuntu/ansible"
                                         exit 1
@@ -146,7 +148,7 @@ ansible_user=ubuntu
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                 ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ2} '
-                                    chmod 400 /home/ubuntu/private_key.pem
+                                    chmod 600 /home/ubuntu/private_key.pem
                                     ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${privateIPsAZ2} "
 					                    echo "Private Instance"
                                     exit 1
@@ -154,7 +156,7 @@ ansible_user=ubuntu
                                     echo "Listing files in /home/ubuntu:"
                                     ls -l /home/ubuntu/
                                     echo "Listing inventory file:"
-                                    cat /home/ubuntu/roles/docker_nginx/tests/inventory
+                                    cat /home/ubuntu/ansible/roles/docker_install/tests/inventory
                                     if ! command -v ansible-playbook &> /dev/null
                                     then
                                         echo "Ansible not found. Installing..."
@@ -163,9 +165,9 @@ ansible_user=ubuntu
                                     fi
                                     if [ -f "/home/ubuntu/ansible/deploy_nginx.yml" ]
                                     then
-                                        ansible-playbook -i /home/ubuntu/roles/docker_nginx/tests/inventory /home/ubuntu/deploy_nginx.yml --private-key=$PEM_FILE
+                                        ansible-playbook -i /home/ubuntu/ansible/roles/docker_install/tests/inventory /home/ubuntu/ansible/deploy_nginx.yml --private-key=$PEM_FILE
                                     else
-                                        echo "Playbook deploy_nginx.yml not found in /home/ubuntu/"
+                                        echo "Playbook deploy_nginx.yml not found in /home/ubuntu/ansible"
                                         exit 1
                                     fi
                                 '
