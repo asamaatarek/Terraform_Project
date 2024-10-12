@@ -69,6 +69,8 @@ pipeline {
                                     ls -l /home/ubuntu/ 
                                     echo "Listing files in /home/ubuntu/ansible:"
                                     ls -l /home/ubuntu/ansible/ 
+                                    echo "Listing files in /home/ubuntu/ansible/roles/docker_install/tests/inventroy:"
+                                    ls -l /home/ubuntu/ansible/roles/docker_install/tests/inventroy
                                     '
                                 cd terraform/ ; terraform destroy -auto-approve
                             """
@@ -81,7 +83,7 @@ pipeline {
                         withCredentials([sshUserPrivateKey(credentialsId: 'tera-pem', keyFileVariable: 'PEM_FILE', usernameVariable: 'ubuntu')]) {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
-                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ../ansible ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/
+                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/ ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/
                                 scp -o StrictHostKeyChecking=no -i $PEM_FILE $PEM_FILE ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/private_key.pem
 
                             """

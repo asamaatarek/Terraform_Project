@@ -105,7 +105,7 @@ resource "aws_instance" "private_instance_az2" {
 
 
 # Private IPs 
-resource "local_file" "ansible_inventory" {
+resource "local_file" "ansible_inventory" {yy
   filename = "${path.module}../ansible/roles/docker_install/tests/inventory"
   content = <<EOT
   [private_servers]
