@@ -72,7 +72,6 @@ pipeline {
                                     echo "Listing files in /home/ubuntu/ansible/inventory:"
                                     cat /home/ubuntu/ansible/inventory
                                     '
-                                cd terraform/ ; terraform destroy -auto-approve
                             """
                         }
                     } else {
@@ -130,7 +129,7 @@ ansible_user=ubuntu
                                     echo "Listing files in /home/ubuntu:"
                                     ls -l /home/ubuntu/
                                     echo "Listing inventory file:"
-                                    cat /home/ubuntu/ansible/roles/docker_nginx/tests/inventory
+                                    cat /home/ubuntu/ansible/inventory
                                     if ! command -v ansible-playbook &> /dev/null
                                     then
                                         echo "Ansible not found. Installing..."
@@ -139,7 +138,7 @@ ansible_user=ubuntu
                                     fi
                                     if [ -f "/home/ubuntu/ansible/deploy_nginx.yml" ]
                                     then
-                                        ansible-playbook -i /home/ubuntu/ansible/roles/docker_install/tests/inventory /home/ubuntu/ansible/deploy_nginx.yml --private-key=/home/ubuntu/tera.pem
+                                        ansible-playbook -i /home/ubuntu/ansible/inventory /home/ubuntu/ansible/deploy_nginx.yml --private-key=/home/ubuntu/tera.pem
                                     else
                                         echo "Playbook deploy_nginx.yml not found in /home/ubuntu/ansible"
                                         exit 1
