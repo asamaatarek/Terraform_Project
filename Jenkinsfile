@@ -145,7 +145,7 @@ ansible_user=ubuntu
                                     fi
                                     ssh -o StrictHostKeyChecking=no -i tera.pem ubuntu@${privateIPsAZ1} "
 					                    sudo docker ps
-                                    exit 1
+                                        exit 1
                                     "
                                 '
                             """
@@ -183,7 +183,6 @@ ansible_user=ubuntu
                                     fi
                                      ssh -o StrictHostKeyChecking=no -i tera.pem ubuntu@${privateIPsAZ2} "
 					                    sudo docker ps
-                                    exit 1
                                     "
                                 '
                                 cd terraform/ ; terraform destroy -auto-approve 
