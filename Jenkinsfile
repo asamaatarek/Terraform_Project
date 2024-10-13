@@ -62,14 +62,14 @@ pipeline {
                         withCredentials([sshUserPrivateKey(credentialsId: 'tera-pem', keyFileVariable: 'PEM_FILE', usernameVariable: 'ubuntu')]) {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
-                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/ ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
+                                scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ../ansible/ ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
 				                scp -o StrictHostKeyChecking=no -i $PEM_FILE $PEM_FILE ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/tera.pem
                                 ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
                                     echo "Listing files in /home/ubuntu:"
                                     ls -l /home/ubuntu/ 
                                     echo "Listing files in /home/ubuntu/ansible:"
                                     ls -l /home/ubuntu/ansible/ 
-                                    echo "Listing files in /home/ubuntu/ansible/roles/docker_install/tests/inventroy:"
+                                    echo "Listing files in /home/ubuntu/ansible/inventroy:"
                                     ls -l /home/ubuntu/ansible/roles/docker_install/tests/inventroy
                                     '
                                 cd terraform/ ; terraform destroy -auto-approve
@@ -139,7 +139,7 @@ ansible_user=ubuntu
                                     fi
                                     if [ -f "/home/ubuntu/ansible/deploy_nginx.yml" ]
                                     then
-                                        ansible-playbook -i /home/ubuntu/ansible/roles/docker_install/tests/inventory /home/ubuntu/ansible/deploy_nginx.yml --private-key=/home/ubuntu/private_key.pem
+                                        ansible-playbook -i /home/ubuntu/ansible/roles/docker_install/tests/inventory /home/ubuntu/ansible/deploy_nginx.yml --private-key=/home/ubuntu/tera.pem
                                     else
                                         echo "Playbook deploy_nginx.yml not found in /home/ubuntu/ansible"
                                         exit 1
@@ -157,8 +157,8 @@ ansible_user=ubuntu
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                 ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ2} '
-                                    chmod 600 /home/ubuntu/private_key.pem
-                                    ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${privateIPsAZ2} "
+                                    chmod 600 /home/ubuntu/tera.pem
+                                    ssh -o StrictHostKeyChecking=no -i tera.pem ubuntu@${privateIPsAZ2} "
 					                    echo "Private Instance"
                                     exit 1
                             	    "
@@ -174,7 +174,7 @@ ansible_user=ubuntu
                                     fi
                                     if [ -f "/home/ubuntu/ansible/deploy_nginx.yml" ]
                                     then
-                                        ansible-playbook -i /home/ubuntu/ansible/roles/docker_install/tests/inventory /home/ubuntu/ansible/deploy_nginx.yml --private-key=$PEM_FILE
+                                        ansible-playbook -i /home/ubuntu/ansible/roles/docker_install/tests/inventory /home/ubuntu/ansible/deploy_nginx.yml --private-key=/home/ubuntu/tera.pem
                                     else
                                         echo "Playbook deploy_nginx.yml not found in /home/ubuntu/ansible"
                                         exit 1
