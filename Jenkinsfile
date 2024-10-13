@@ -147,11 +147,6 @@ ansible_user=ubuntu
 					                    sudo docker ps
                                     exit 1
                                     "
-                                    ssh -o StrictHostKeyChecking=no -i tera.pem ubuntu@${privateIPsAZ2} "
-					                    echo "Private Az2 Instance"
-                                    exit 1
-                            	    "
-                                    cd terraform/ ; terraform destroy -auto-approve
                                 '
                             """
                         }
@@ -186,6 +181,10 @@ ansible_user=ubuntu
                                         echo "Playbook deploy_nginx.yml not found in /home/ubuntu/ansible"
                                         exit 1
                                     fi
+                                     ssh -o StrictHostKeyChecking=no -i tera.pem ubuntu@${privateIPsAZ2} "
+					                    sudo docker ps
+                                    exit 1
+                                    "
                                 '
                                 cd terraform/ ; terraform destroy -auto-approve 
                             """
