@@ -145,7 +145,6 @@ ansible_user=ubuntu
                                     fi
                                     ssh -o StrictHostKeyChecking=no -i tera.pem ubuntu@${privateIPsAZ1} "
 					                    sudo docker ps
-                                        exit 1
                                     "
                                 '
                             """
