@@ -63,7 +63,7 @@ pipeline {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                 scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/ ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/
-				                scp -o StrictHostKeyChecking=no -i $PEM_FILE $PEM_FILE ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/private_key.pem
+				                scp -o StrictHostKeyChecking=no -i $PEM_FILE $PEM_FILE ubuntu@${BASTION_IP_AZ1}:/home/ubuntu/tera.pem
                                 ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
                                     echo "Listing files in /home/ubuntu:"
                                     ls -l /home/ubuntu/ 
@@ -84,7 +84,7 @@ pipeline {
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                 scp -o StrictHostKeyChecking=no -i $PEM_FILE -r ansible/ ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/
-                                scp -o StrictHostKeyChecking=no -i $PEM_FILE $PEM_FILE ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/private_key.pem
+                                scp -o StrictHostKeyChecking=no -i $PEM_FILE $PEM_FILE ubuntu@${BASTION_IP_AZ2}:/home/ubuntu/tera.pem
 
                             """
                         }
@@ -122,8 +122,8 @@ ansible_user=ubuntu
                             sh """#!/bin/bash
                                 chmod 400 $PEM_FILE
                                  ssh -o StrictHostKeyChecking=no -i $PEM_FILE ubuntu@${BASTION_IP_AZ1} '
-				                    chmod 600 /home/ubuntu/private_key.pem
-                                    ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${privateIPsAZ1} "
+				                    chmod 600 /home/ubuntu/tera.pem
+                                    ssh -o StrictHostKeyChecking=no -i tera.pem ubuntu@${privateIPsAZ1} "
 					                    echo "Private Instance"
                                     exit 1
                             	    "
@@ -137,7 +137,7 @@ ansible_user=ubuntu
                                         sudo DEBIAN_FRONTEND=noninteractive apt-get update
                                         sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ansible
                                     fi
-                                    if [ -f "/home/ubuntu/deploy_nginx.yml" ]
+                                    if [ -f "/home/ubuntu/ansible/deploy_nginx.yml" ]
                                     then
                                         ansible-playbook -i /home/ubuntu/ansible/roles/docker_install/tests/inventory /home/ubuntu/ansible/deploy_nginx.yml --private-key=/home/ubuntu/private_key.pem
                                     else

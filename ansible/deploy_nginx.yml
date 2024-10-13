@@ -1,26 +1,22 @@
 ---
-- hosts: private_servers
-  become: yes  # to run commands with sudo
+- name: Install Docker and Deploy Nginx
+  hosts: private_servers
+  become: true
+  vars:
+    ansible_ssh_private_key_file: /home/ubuntu/tera.pem
+  roles:
+    - docker_install
+
   tasks:
-    - name: Install Docker
-      apt:
-        name: docker.io
-        state: present
-        update_cache: yes
-
-    - name: Start Docker service
-      service:
-        name: docker
-        state: started
-        enabled: yes
-
-    - name: Add user to docker group
-      user:
-        name: ubuntu
-        groups: docker
-        append: yes
-
     - name: Pull the latest Nginx image
       docker_image:
         name: nginx
         source: pull
+
+    - name: Run Nginx container
+      docker_container:
+        name: nginx
+        image: nginx:latest
+        state: started
+        ports:
+          - "80:80"
