@@ -69,8 +69,8 @@ pipeline {
                                     ls -l /home/ubuntu/ 
                                     echo "Listing files in /home/ubuntu/ansible:"
                                     ls -l /home/ubuntu/ansible/ 
-                                    echo "Listing files in /home/ubuntu/ansible/inventroy:"
-                                    cat /home/ubuntu/ansible/inventroy
+                                    echo "Listing files in /home/ubuntu/ansible/inventory:"
+                                    cat /home/ubuntu/ansible/inventory
                                     '
                                 cd terraform/ ; terraform destroy -auto-approve
                             """
